@@ -1,0 +1,58 @@
+/************************************************************************************
+ *  Created By: Tauseef Ahmad
+ *  Created On: October 23, 2021
+ *  
+ *  Tutorial Video: https://youtu.be/yem5EysVloc
+ *  My Channel: https://www.youtube.com/channel/UCOXYfOHgu-C-UfGyDcu5sYw/
+ *  
+ *  *********************************************************************************/
+ 
+ //https://docs.google.com/spreadsheets/d/1ed1q95g3PuIdnTfH5-8dcb2yTQjQGHR4wfN_ByaMJwc/edit#gid=0
+
+var ss = SpreadsheetApp.openById('1GR6zTRU0E02v6AHWU_jx2fmXfgBn6znO2cm3KAmqi5Q');
+var sheet = ss.getSheetByName('Datalogger');
+
+
+//MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+function doGet(e){
+  //----------------------------------------------------------------------------------
+  //write_google_sheet() function in esp32 sketch, is send data to this code block
+  //----------------------------------------------------------------------------------
+  //get gps data from ESP32
+  if (e.parameter == 'undefined') {
+    return ContentService.createTextOutput("Received data is undefined");
+  }
+  //----------------------------------------------------------------------------------
+  var dateTime = new Date();
+  X_coord    = e.parameters.X_coord;
+  Y_coord   = e.parameters.Y_coord;
+  //Logger.log('latitude=' + latitude);
+  //----------------------------------------------------------------------------------
+  var nextRow = sheet.getLastRow() + 1;
+  sheet.getRange("A" + nextRow).setValue(dateTime);
+  sheet.getRange("B" + nextRow).setValue(X_coord);
+  sheet.getRange("C" + nextRow).setValue(Y_coord);
+  //----------------------------------------------------------------------------------
+
+  //returns response back to ESP32
+  return ContentService.createTextOutput("Status Updated in Google Sheet");
+  //----------------------------------------------------------------------------------
+}
+//MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+
+
+
+
+//MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
+//Extra Function. Not used in this project.
+//planning to use in future projects.
+//this function is used to handle POST request
+function doPost(e) {
+  var val = e.parameter.value;
+  
+  if (e.parameter.value !== undefined){
+    var range = sheet.getRange('A2');
+    range.setValue(val);
+  }
+}
+//MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
