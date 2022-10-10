@@ -1,7 +1,10 @@
+#include <LiquidCrystal_I2C.h>
+
 
 //----------------------------
 #include <WiFi.h>
 #include <HTTPClient.h>
+#include <Wire.h>
 //----------------------------
 
 //--------------------------------------------
@@ -24,10 +27,18 @@ String GOOGLE_SCRIPT_ID = "AKfycbwgr-4Nd6BF9EO2Wr00D8dKJQtetk5sjSqPGa2m8flkQyBd6
 
 const int sendInterval = 2000;
 String param;
+int nDevices = 0;
+String X_string = "X_coord=";
+String Y_string = "Y_coord=";
+// Set the LCD address to 0x27 for a 16 chars and 2 line display
+LiquidCrystal_I2C lcd(0x27, 16, 2);
 /************************************************************************************
  *  setup function starts
  **********************************************************************************/
  void setup() {
+    Wire.begin();
+    lcd.begin();
+    lcd.backlight();
   //--------------------------------------------
   Serial.begin(115200);
   //start serial communication with Serial Monitor
@@ -45,6 +56,10 @@ String param;
     Serial.print(".");
   }
   Serial.println("OK");
+  lcd.setCursor(0,0);
+  lcd.print(X_string);
+  lcd.setCursor(0,1);
+  lcd.print(Y_string);
   //--------------------------------------------
 }
 //MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM
@@ -55,14 +70,24 @@ String param;
  *  loop function starts
  **********************************************************************************/
 void loop() {
-    X_value = analogRead(analogPinX);
-    Y_Value = analogRead(analogPinY);
-    param  = "X_coord="+String(X_value);
-    param += "&Y_coord="+String(Y_Value);
+  X_value = analogRead(analogPinX);
+  Y_Value = analogRead(analogPinY);
+  param  = "X_coord="+String(X_value);
+  param += "&Y_coord="+String(Y_Value);
+  
+  Serial.println(param);
+  lcd.clear();
+  lcd.setCursor(0,0);
+  lcd.print(X_string);
+  lcd.setCursor(0,1);
+  lcd.print(Y_string);
+  
+  lcd.setCursor(X_string.length()+2,0);
+  lcd.print(X_value);
+  lcd.setCursor(Y_string.length()+2,1);
+  lcd.print(Y_Value);
 
-    
-    Serial.println(param);
-    write_to_google_sheet(param);
+  //write_to_google_sheet(param);
 
   
   delay(sendInterval);
