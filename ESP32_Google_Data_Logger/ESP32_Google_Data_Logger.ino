@@ -1,3 +1,5 @@
+#include <HX711_ADC.h>
+
 #include <LiquidCrystal_I2C.h>
 
 
@@ -11,6 +13,7 @@
 
 #define RXD2 16
 #define TXD2 17
+
 int analogPinX = 35;
 int analogPinY = 34; 
 int X_value,Y_Value;
